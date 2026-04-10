@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Purr-fect Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      safelist: [
+        'bg-peach', 'bg-mint', 'bg-lavender', 'bg-rosepink', 'bg-softgray',
+        'bg-peach/40', 'bg-mint/40', 'bg-lavender/40', 'bg-rosepink/40',
+      ],
+      theme: {
+        extend: {
+          colors: {
+            cream:    '#FFF8F0',
+            peach:    '#FFDAB9',
+            mint:     '#B5EAD7',
+            lavender: '#C7CEEA',
+            rosepink: '#FFB7C5',
+            softgray: '#F5F0EB',
+            tabby:    '#C4884D',
+            tuxwhite: '#F0EDE8',
+            inkblack: '#2D2926',
+          },
+          fontFamily: {
+            sans: ['"Nunito"', 'ui-rounded', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Nunito', ui-rounded, system-ui, sans-serif; }
+    .card-pouch { transition: all 0.3s cubic-bezier(.4,0,.2,1); }
+    .card-pouch:hover { transform: translateY(-2px) scale(1.01); }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .mascot-bounce { animation: bounce 1.2s ease-in-out infinite; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+    @keyframes wave { 0%,100%{transform:rotate(0)} 25%{transform:rotate(15deg)} 75%{transform:rotate(-8deg)} }
+    .wave-paw { animation: wave 1.4s ease-in-out infinite; transform-origin: 50% 90%; }
+    @keyframes sleepBreathe { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.03)} }
+    .sleep-breathe { animation: sleepBreathe 3s ease-in-out infinite; }
+    @keyframes tailWag { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+    .tail-wag { animation: tailWag 2s ease-in-out infinite; transform-origin: 50% 100%; }
+    input::placeholder { color: #c4a882; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #FFDAB9; border-radius: 99px; }
+    .modal-overlay { background:rgba(255,248,240,0.88); backdrop-filter:blur(8px); }
+  </style>
+</head>
+<body class="bg-cream min-h-screen pb-28">
+
+<div id="app" class="max-w-md mx-auto px-4 pt-6">
+
+  <!-- ═══ Header with Tabby Cat inline ═══ -->
+  <div class="flex items-center gap-3 mb-5">
+    <!-- Tabby mascot (brown striped, red collar, bell) — 48x48 -->
+    <svg class="flex-shrink-0" width="48" height="48" viewBox="0 0 100 100">
+      <!-- Ears -->
+      <polygon points="25,38 18,12 40,30" fill="#C4884D"/>
+      <polygon points="75,38 82,12 60,30" fill="#C4884D"/>
+      <polygon points="27,36 22,18 38,31" fill="#FFDAB9"/>
+      <polygon points="73,36 78,18 62,31" fill="#FFDAB9"/>
+      <!-- Head -->
+      <ellipse cx="50" cy="52" rx="32" ry="28" fill="#C4884D"/>
+      <!-- Stripes -->
+      <path d="M35 35 Q38 42 35 48" stroke="#8B5E34" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M42 32 Q44 40 42 46" stroke="#8B5E34" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M58 32 Q56 40 58 46" stroke="#8B5E34" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M65 35 Q62 42 65 48" stroke="#8B5E34" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- White muzzle -->
+      <ellipse cx="50" cy="60" rx="16" ry="12" fill="#FFF8F0"/>
+      <!-- Eyes -->
+      <ellipse cx="38" cy="50" rx="5" ry="5.5" fill="#2D2926"/>
+      <ellipse cx="62" cy="50" rx="5" ry="5.5" fill="#2D2926"/>
+      <ellipse cx="39.5" cy="48.5" rx="2" ry="2" fill="white"/>
+      <ellipse cx="63.5" cy="48.5" rx="2" ry="2" fill="white"/>
+      <!-- Nose -->
+      <ellipse cx="50" cy="57" rx="3" ry="2" fill="#E8837C"/>
+      <!-- Mouth -->
+      <path d="M47 59 Q50 63 53 59" stroke="#C4884D" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- Whiskers -->
+      <line x1="15" y1="54" x2="34" y2="56" stroke="#8B7355" stroke-width="1" opacity="0.5"/>
+      <line x1="15" y1="60" x2="34" y2="60" stroke="#8B7355" stroke-width="1" opacity="0.5"/>
+      <line x1="85" y1="54" x2="66" y2="56" stroke="#8B7355" stroke-width="1" opacity="0.5"/>
+      <line x1="85" y1="60" x2="66" y2="60" stroke="#8B7355" stroke-width="1" opacity="0.5"/>
+      <!-- Red collar -->
+      <path d="M30 72 Q50 80 70 72" stroke="#E05040" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Bell -->
+      <circle cx="50" cy="78" r="4" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+      <circle cx="50" cy="79" r="1" fill="#DAA520"/>
+    </svg>
+    <div>
+      <h1 class="text-2xl font-extrabold text-gray-700">Purr-fect Card</h1>
+      <p class="text-sm text-gray-400 font-semibold">Your purr-fect rewards companion</p>
+    </div>
+  </div>
+
+  <!-- ═══ Quick Search Tags ═══ -->
+  <div class="flex flex-wrap gap-2 mb-3 justify-center">
+    <button onclick="quickSearch('Dining')" class="px-3 py-1.5 bg-white rounded-2xl text-xs font-bold text-gray-500 shadow-sm hover:shadow-md hover:bg-peach/30 transition-all">🍽️ Dining</button>
+    <button onclick="quickSearch('Grocery')" class="px-3 py-1.5 bg-white rounded-2xl text-xs font-bold text-gray-500 shadow-sm hover:shadow-md hover:bg-mint/30 transition-all">🛒 Grocery</button>
+    <button onclick="quickSearch('Gas')" class="px-3 py-1.5 bg-white rounded-2xl text-xs font-bold text-gray-500 shadow-sm hover:shadow-md hover:bg-lavender/30 transition-all">⛽ Gas</button>
+    <button onclick="quickSearch('Travel')" class="px-3 py-1.5 bg-white rounded-2xl text-xs font-bold text-gray-500 shadow-sm hover:shadow-md hover:bg-rosepink/30 transition-all">✈️ Travel</button>
+    <button onclick="quickSearch('Streaming')" class="px-3 py-1.5 bg-white rounded-2xl text-xs font-bold text-gray-500 shadow-sm hover:shadow-md hover:bg-lavender/30 transition-all">📺 Streaming</button>
+    <button onclick="quickSearch('Drugstore')" class="px-3 py-1.5 bg-white rounded-2xl text-xs font-bold text-gray-500 shadow-sm hover:shadow-md hover:bg-mint/30 transition-all">💊 Drugstore</button>
+    <button onclick="quickSearch('Home Improvement')" class="px-3 py-1.5 bg-white rounded-2xl text-xs font-bold text-gray-500 shadow-sm hover:shadow-md hover:bg-mint/30 transition-all">🔨 Home</button>
+  </div>
+
+  <!-- ═══ Search Bar ═══ -->
+  <div class="relative mb-6">
+    <input id="searchInput" type="text" placeholder="Where are we going, Meow?"
+      class="w-full py-4 pl-5 pr-14 bg-white rounded-3xl shadow-xl shadow-pink-100/50 text-gray-600 font-semibold text-base outline-none border-2 border-transparent focus:border-peach transition-all"
+      oninput="handleSearch(this.value)" />
+    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-white w-10 h-10 rounded-2xl flex items-center justify-center shadow-md transition-colors hover:scale-110"
+      style="background-color:#FFDAB9"
+      onclick="handleSearch(document.getElementById('searchInput').value)" aria-label="Search">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <ellipse cx="8" cy="6.5" rx="2.2" ry="2.8"/>
+        <ellipse cx="16" cy="6.5" rx="2.2" ry="2.8"/>
+        <ellipse cx="4.5" cy="12.5" rx="2" ry="2.5"/>
+        <ellipse cx="19.5" cy="12.5" rx="2" ry="2.5"/>
+        <path d="M12 22c-3 0-5.5-2-6.5-4.5a4.5 4.5 0 0 1 3-5.5 6 6 0 0 1 7 0 4.5 4.5 0 0 1 3 5.5C17.5 20 15 22 12 22z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ═══ Recommendation Banner ═══ -->
+  <div id="recommendation" class="hidden mb-6 fade-in-up">
+    <!-- Top pick — Tuxedo cat mascot (black & white, green eyes) as the Lucky Cat -->
+    <div id="recTop" class="bg-white rounded-3xl shadow-xl shadow-pink-100/50 p-5 relative overflow-hidden mb-3">
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 mascot-bounce">
+          <svg width="56" height="64" viewBox="0 0 80 90" class="wave-paw">
+            <!-- Ears -->
+            <polygon points="20,30 12,6 34,24" fill="#2D2926"/>
+            <polygon points="60,30 68,6 46,24" fill="#2D2926"/>
+            <polygon points="22,28 16,12 32,25" fill="#FFDAB9"/>
+            <polygon points="58,28 64,12 48,25" fill="#FFDAB9"/>
+            <!-- Head -->
+            <ellipse cx="40" cy="42" rx="26" ry="22" fill="#2D2926"/>
+            <!-- White face patch -->
+            <path d="M28 38 Q32 28 40 27 Q48 28 52 38 L52 52 Q48 60 40 62 Q32 60 28 52 Z" fill="#F0EDE8"/>
+            <!-- Green eyes -->
+            <ellipse cx="32" cy="40" rx="4.5" ry="5" fill="#5BA858"/>
+            <ellipse cx="48" cy="40" rx="4.5" ry="5" fill="#5BA858"/>
+            <ellipse cx="32" cy="40" rx="2.5" ry="3.5" fill="#2D2926"/>
+            <ellipse cx="48" cy="40" rx="2.5" ry="3.5" fill="#2D2926"/>
+            <ellipse cx="33.2" cy="38.5" rx="1.3" ry="1.3" fill="white"/>
+            <ellipse cx="49.2" cy="38.5" rx="1.3" ry="1.3" fill="white"/>
+            <!-- Nose -->
+            <ellipse cx="40" cy="47" rx="2.5" ry="1.8" fill="#EDAAA0"/>
+            <!-- Mouth -->
+            <path d="M37 49 Q40 53 43 49" stroke="#C4884D" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <!-- Whiskers -->
+            <line x1="10" y1="44" x2="27" y2="46" stroke="#ccc" stroke-width="0.8"/>
+            <line x1="10" y1="50" x2="27" y2="49" stroke="#ccc" stroke-width="0.8"/>
+            <line x1="70" y1="44" x2="53" y2="46" stroke="#ccc" stroke-width="0.8"/>
+            <line x1="70" y1="50" x2="53" y2="49" stroke="#ccc" stroke-width="0.8"/>
+            <!-- Beckoning paw -->
+            <path d="M58 60 Q62 54 66 50 Q68 48 66 46" stroke="#F0EDE8" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="66" cy="45" rx="4" ry="3" fill="#F0EDE8"/>
+            <!-- Body hint -->
+            <ellipse cx="40" cy="72" rx="20" ry="14" fill="#2D2926"/>
+            <ellipse cx="40" cy="74" rx="12" ry="8" fill="#F0EDE8"/>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-bold text-peach uppercase tracking-wider mb-1">Best Card, Meow!</p>
+          <p id="recCardName" class="text-lg font-extrabold text-gray-700 truncate"></p>
+          <p id="recDetail" class="text-sm text-gray-400 font-semibold mt-1"></p>
+          <div id="recBadge" class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold"></div>
+        </div>
+      </div>
+      <!-- Decorative paw prints -->
+      <svg class="absolute -bottom-1 -right-1 opacity-10" width="50" height="40" viewBox="0 0 50 40">
+        <ellipse cx="10" cy="8" rx="3" ry="4" fill="#C4884D"/><ellipse cx="22" cy="6" rx="3" ry="4" fill="#C4884D"/>
+        <ellipse cx="5" cy="18" rx="2.5" ry="3.5" fill="#C4884D"/><ellipse cx="27" cy="16" rx="2.5" ry="3.5" fill="#C4884D"/>
+        <ellipse cx="16" cy="28" rx="8" ry="7" fill="#C4884D"/>
+        <ellipse cx="38" cy="18" rx="3" ry="4" fill="#C4884D"/><ellipse cx="48" cy="20" rx="2.5" ry="3.5" fill="#C4884D"/>
+        <ellipse cx="43" cy="32" rx="6" ry="5" fill="#C4884D"/>
+      </svg>
+    </div>
+    <!-- Runner-up cards -->
+    <div id="recRunners" class="space-y-2"></div>
+  </div>
+
+  <!-- ═══ Wallet Section ═══ -->
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="text-lg font-extrabold text-gray-600">The Cat's Wallet</h2>
+    <button onclick="openAddCardModal()"
+      class="bg-mint hover:bg-green-200 text-gray-600 text-sm font-bold px-4 py-2 rounded-2xl shadow-md transition-colors">+ Add Card</button>
+  </div>
+
+  <div id="cardList" class="space-y-4 mb-6"></div>
+
+  <!-- ═══ Empty State — Black cat sleeping (golden eyes, Huskies reference) ═══ -->
+  <div id="emptyState" class="hidden text-center py-10">
+    <svg class="mx-auto sleep-breathe" width="140" height="100" viewBox="0 0 200 140">
+      <!-- Curled-up body -->
+      <ellipse cx="100" cy="95" rx="65" ry="35" fill="#2D2926"/>
+      <!-- Tail curled around -->
+      <path d="M160 90 Q175 80 170 65 Q165 55 155 60" stroke="#2D2926" stroke-width="10" fill="none" stroke-linecap="round" class="tail-wag"/>
+      <!-- Head resting -->
+      <ellipse cx="60" cy="78" rx="28" ry="22" fill="#2D2926"/>
+      <!-- Ears -->
+      <polygon points="40,62 32,42 52,58" fill="#2D2926"/>
+      <polygon points="78,60 86,42 68,56" fill="#2D2926"/>
+      <polygon points="42,60 36,47 50,58" fill="#3D3936"/>
+      <polygon points="76,58 82,47 70,56" fill="#3D3936"/>
+      <!-- Closed eyes (sleeping lines) -->
+      <path d="M48 76 Q52 79 56 76" stroke="#DAA520" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M64 75 Q68 78 72 75" stroke="#DAA520" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Nose -->
+      <ellipse cx="60" cy="82" rx="2" ry="1.4" fill="#555"/>
+      <!-- Tiny smile -->
+      <path d="M57 84 Q60 86 63 84" stroke="#555" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <!-- Zzz -->
+      <text x="92" y="55" font-family="Nunito, sans-serif" font-size="14" font-weight="800" fill="#C7CEEA" opacity="0.7">z</text>
+      <text x="105" y="42" font-family="Nunito, sans-serif" font-size="18" font-weight="800" fill="#C7CEEA" opacity="0.5">z</text>
+      <text x="120" y="28" font-family="Nunito, sans-serif" font-size="22" font-weight="800" fill="#C7CEEA" opacity="0.3">z</text>
+    </svg>
+    <p class="text-gray-400 font-bold text-lg mt-3">No cards yet...</p>
+    <p class="text-gray-300 font-semibold text-sm mt-1">Add your first card and let's find some treats!</p>
+  </div>
+</div>
+
+<!-- ═══ Add/Edit Card Modal ═══ -->
+<div id="cardModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-end sm:items-center justify-center">
+  <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl p-6 fade-in-up">
+    <div class="flex items-center justify-between mb-5">
+      <h3 id="modalTitle" class="text-xl font-extrabold text-gray-700">Add New Card</h3>
+      <button onclick="closeCardModal()" class="text-gray-300 hover:text-gray-500 text-2xl font-bold">&times;</button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="text-sm font-bold text-gray-500 block mb-1">Card Name</label>
+        <input id="cardName" type="text" placeholder="e.g. Chase Freedom Flex"
+          class="w-full py-3 px-4 bg-softgray rounded-2xl text-gray-600 font-semibold outline-none border-2 border-transparent focus:border-lavender" />
+      </div>
+      <div>
+        <label class="text-sm font-bold text-gray-500 block mb-1">Card Color</label>
+        <div id="colorPicker" class="flex gap-2 flex-wrap">
+          <button onclick="pickColor('peach')" class="w-9 h-9 rounded-xl bg-peach border-2 border-transparent hover:scale-110 transition-transform" data-color="peach"></button>
+          <button onclick="pickColor('mint')" class="w-9 h-9 rounded-xl bg-mint border-2 border-transparent hover:scale-110 transition-transform" data-color="mint"></button>
+          <button onclick="pickColor('lavender')" class="w-9 h-9 rounded-xl bg-lavender border-2 border-transparent hover:scale-110 transition-transform" data-color="lavender"></button>
+          <button onclick="pickColor('rosepink')" class="w-9 h-9 rounded-xl bg-rosepink border-2 border-transparent hover:scale-110 transition-transform" data-color="rosepink"></button>
+        </div>
+      </div>
+      <div>
+        <label class="text-sm font-bold text-gray-500 block mb-2">Reward Categories</label>
+        <div id="rewardRows" class="space-y-2"></div>
+        <button onclick="addRewardRow()" class="mt-2 text-sm font-bold text-peach hover:text-rosepink transition-colors">+ Add Category</button>
+      </div>
+      <div>
+        <label class="flex items-center gap-2 text-sm font-bold text-gray-500 mb-2 cursor-pointer">
+          <input id="hasQuarterly" type="checkbox" class="accent-peach w-4 h-4" onchange="toggleQuarterly()" />
+          Has Rotating Quarterly Categories
+        </label>
+        <div id="quarterlySection" class="hidden space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-xs font-bold text-gray-400">Quarter</label>
+              <select id="quarterSelect" class="w-full py-2 px-3 bg-softgray rounded-xl text-gray-600 font-semibold text-sm outline-none">
+                <option value="Q1">Q1 (Jan-Mar)</option>
+                <option value="Q2">Q2 (Apr-Jun)</option>
+                <option value="Q3">Q3 (Jul-Sep)</option>
+                <option value="Q4">Q4 (Oct-Dec)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-gray-400">Bonus %</label>
+              <input id="quarterPercent" type="number" value="5" min="1" max="30"
+                class="w-full py-2 px-3 bg-softgray rounded-xl text-gray-600 font-semibold text-sm outline-none" />
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-gray-400">Categories (comma separated)</label>
+            <input id="quarterCategories" type="text" placeholder="e.g. Amazon, Whole Foods"
+              class="w-full py-2 px-3 bg-softgray rounded-xl text-gray-600 font-semibold text-sm outline-none" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <label class="text-sm font-bold text-gray-500 block mb-2">Special Stash (Manual Offers)</label>
+        <div id="specialRows" class="space-y-2"></div>
+        <button onclick="addSpecialRow()" class="mt-2 text-sm font-bold text-lavender hover:text-purple-400 transition-colors">+ Add Offer</button>
+        <p class="text-xs text-gray-300 mt-1">e.g. "GameStop 10%" — overrides default rates</p>
+      </div>
+    </div>
+    <button id="saveCardBtn" onclick="saveCard()"
+      class="w-full mt-6 py-3 bg-peach hover:bg-rosepink text-white font-extrabold rounded-2xl shadow-lg transition-colors text-base">
+      <!-- Paw icon in button -->
+      <span class="inline-flex items-center gap-2">Save Card
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="8" cy="6.5" rx="2" ry="2.5"/><ellipse cx="16" cy="6.5" rx="2" ry="2.5"/><ellipse cx="5" cy="12" rx="1.8" ry="2.2"/><ellipse cx="19" cy="12" rx="1.8" ry="2.2"/><path d="M12 21c-2.8 0-5-1.8-6-4a4 4 0 0 1 2.8-5 5.5 5.5 0 0 1 6.4 0 4 4 0 0 1 2.8 5c-1 2.2-3.2 4-6 4z"/></svg>
+      </span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ Detail Modal ═══ -->
+<div id="detailModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-end sm:items-center justify-center">
+  <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl p-6 fade-in-up">
+    <div class="flex items-center justify-between mb-4">
+      <h3 id="detailTitle" class="text-xl font-extrabold text-gray-700"></h3>
+      <button onclick="closeDetailModal()" class="text-gray-300 hover:text-gray-500 text-2xl font-bold">&times;</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+// ─── Data Layer ──────────────────────────────────────────
+const STORAGE_KEY = 'purrfectCard_v1';
+
+const DEFAULT_CARDS = [
+  // ── Chase Trifecta ─────────────────────────────────────
+  {
+    id: 'csp',
+    name: 'Chase Sapphire Preferred',
+    color: 'mint',
+    brandColor: '#D6E4F7',
+    rewards: [
+      { category: 'Dining', percent: 3 },
+      { category: 'Online Grocery', percent: 3 },
+      { category: 'Select Streaming', percent: 3 },
+      { category: 'Travel (Chase)', percent: 5 },
+      { category: 'Travel', percent: 2 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1,
+  },
+  {
+    id: 'cff',
+    name: 'Chase Freedom Flex',
+    color: 'lavender',
+    brandColor: '#CEDAF0',
+    rewards: [
+      { category: 'Dining', percent: 3 },
+      { category: 'Drugstores', percent: 3 },
+      { category: 'Travel (Chase)', percent: 5 },
+    ],
+    quarterly: [
+      { quarter: 'Q1', percent: 5, categories: ['Dining'] },
+      { quarter: 'Q2', percent: 5, categories: ['Amazon', 'Whole Foods', 'Chase Travel'] },
+      { quarter: 'Q3', percent: 5, categories: ['Gas Stations', 'EV Charging'] },
+      { quarter: 'Q4', percent: 5, categories: ['Walmart', 'PayPal'] },
+    ],
+    specials: [],
+    basePercent: 1,
+  },
+  {
+    id: 'cfu',
+    name: 'Chase Freedom Unlimited',
+    color: 'peach',
+    brandColor: '#D0E0ED',
+    rewards: [
+      { category: 'Dining', percent: 3 },
+      { category: 'Drugstores', percent: 3 },
+      { category: 'Travel (Chase)', percent: 5 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1.5,
+  },
+  // ── Citi ───────────────────────────────────────────────
+  {
+    id: 'ccc',
+    name: 'Citi Custom Cash',
+    color: 'rosepink',
+    brandColor: '#F5D6E0',
+    rewards: [
+      { category: 'Dining', percent: 5 },
+      { category: 'Groceries', percent: 5 },
+      { category: 'Gas', percent: 5 },
+      { category: 'Drugstores', percent: 5 },
+      { category: 'Travel', percent: 5 },
+      { category: 'Home Improvement', percent: 5 },
+      { category: 'Streaming', percent: 5 },
+      { category: 'Fitness', percent: 5 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1,
+  },
+  {
+    id: 'cdc',
+    name: 'Citi Double Cash',
+    color: 'mint',
+    brandColor: '#D4E4F4',
+    rewards: [],
+    quarterly: [],
+    specials: [],
+    basePercent: 2,
+  },
+  {
+    id: 'costco',
+    name: 'Citi Costco Anywhere',
+    color: 'lavender',
+    brandColor: '#F0D4D4',
+    rewards: [
+      { category: 'Gas', percent: 4 },
+      { category: 'EV Charging', percent: 4 },
+      { category: 'Restaurants', percent: 3 },
+      { category: 'Dining', percent: 3 },
+      { category: 'Travel', percent: 3 },
+      { category: 'Costco', percent: 2 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1,
+  },
+  // ── Amex ───────────────────────────────────────────────
+  {
+    id: 'amexg',
+    name: 'Amex Gold',
+    color: 'peach',
+    brandColor: '#F5E6C8',
+    rewards: [
+      { category: 'Restaurants', percent: 4 },
+      { category: 'Dining', percent: 4 },
+      { category: 'Groceries', percent: 4 },
+      { category: 'Flights', percent: 3 },
+    ],
+    quarterly: [],
+    specials: [
+      { name: 'Sephora', percent: 5, note: '+5 MR/dollar, exp 5/3' },
+      { name: 'Airbnb', percent: 20, note: '$50 off $250, exp 5/5' },
+      { name: 'Shake Shack', percent: 15, note: 'exp 5/15' },
+      { name: 'Topgolf', percent: 37, note: '$15 off $40, exp 5/15' },
+      { name: 'lululemon', percent: 25, note: '$25 off $100, exp 5/3' },
+      { name: 'Turo', percent: 20, note: 'exp 5/31' },
+      { name: 'Dropbox', percent: 40, note: 'up to $35, exp 6/30' },
+      { name: 'Best Buy', percent: 1, note: '+1 MR/dollar, exp 9/7' },
+      { name: 'Outback Steakhouse', percent: 20, note: '$15 off $75, exp 4/30' },
+      { name: 'Microsoft Store', percent: 21, note: '$15 off $70, exp 4/30' },
+      { name: 'Fontainebleau LV', percent: 20, note: '$100 off $500, exp 5/31' },
+      { name: 'WorldHotels', percent: 25, note: '$125 off $500, exp 7/31' },
+      { name: 'Sixt Car Rental', percent: 20, note: '$100 off $500, exp 5/31' },
+      { name: 'TaxAct', percent: 30, note: 'up to $60, exp 4/18' },
+      { name: 'Sonesta Hotels', percent: 20, note: '$60 off $300, exp 6/20' },
+    ],
+    basePercent: 1,
+  },
+  {
+    id: 'edp',
+    name: 'Amex EveryDay Preferred',
+    color: 'rosepink',
+    brandColor: '#D8E2F0',
+    rewards: [
+      { category: 'Groceries', percent: 2 },
+      { category: 'Gas', percent: 2 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1,
+  },
+  // ── Other Issuers ──────────────────────────────────────
+  {
+    id: 'boacr',
+    name: 'BoA Customized Cash',
+    color: 'mint',
+    brandColor: '#F0D4D0',
+    rewards: [
+      { category: 'Online Shopping', percent: 3 },
+      { category: 'Grocery', percent: 2 },
+      { category: 'Wholesale Clubs', percent: 2 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1,
+  },
+  {
+    id: 'ppmc',
+    name: 'PayPal Cashback MC',
+    color: 'lavender',
+    brandColor: '#D6E0F5',
+    rewards: [
+      { category: 'PayPal', percent: 3 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1.5,
+  },
+  {
+    id: 'amzn',
+    name: 'Amazon Prime Rewards',
+    color: 'peach',
+    brandColor: '#E8E0D0',
+    rewards: [
+      { category: 'Amazon', percent: 5 },
+      { category: 'Whole Foods', percent: 5 },
+      { category: 'Restaurants', percent: 2 },
+      { category: 'Gas', percent: 2 },
+      { category: 'Drugstores', percent: 2 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1,
+  },
+  {
+    id: 'disc',
+    name: 'Discover it',
+    color: 'rosepink',
+    brandColor: '#F5DFD0',
+    rewards: [],
+    quarterly: [
+      { quarter: 'Q1', percent: 5, categories: ['Grocery Stores', 'Wholesale Clubs', 'Select Streaming'] },
+      { quarter: 'Q2', percent: 5, categories: ['Restaurants', 'Home Improvement'] },
+      { quarter: 'Q3', percent: 5, categories: ['Digital Wallets', 'Gas Stations'] },
+      { quarter: 'Q4', percent: 5, categories: ['Amazon', 'Target', 'Walmart'] },
+    ],
+    specials: [],
+    basePercent: 1,
+  },
+  {
+    id: 'ventx',
+    name: 'Capital One Venture X',
+    color: 'mint',
+    brandColor: '#D8D8D8',
+    rewards: [
+      { category: 'Hotels (Cap1 Travel)', percent: 10 },
+      { category: 'Rental Cars (Cap1 Travel)', percent: 10 },
+      { category: 'Travel (Cap1)', percent: 5 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 2,
+  },
+  {
+    id: 'usbcp',
+    name: 'U.S. Bank Cash+',
+    color: 'peach',
+    brandColor: '#D4D8F0',
+    rewards: [
+      { category: 'Utilities', percent: 5 },
+      { category: 'Home Utilities', percent: 5 },
+      { category: 'Sports', percent: 5 },
+      { category: 'Gas & EV', percent: 2 },
+    ],
+    quarterly: [],
+    specials: [],
+    basePercent: 1,
+  },
+];
+
+const CATEGORY_ALIASES = {
+  'restaurant': ['dining', 'restaurants', 'food', 'eat', 'dinner', 'lunch', 'brunch'],
+  'dining': ['restaurant', 'restaurants', 'food', 'eat', 'dinner', 'lunch', 'brunch', 'sushi', 'ramen', 'bbq'],
+  'grocery': ['groceries', 'grocery stores', 'supermarket', 'online grocery', 'safeway', 'trader joes', 'sprouts', 'hmart'],
+  'gas': ['gas stations', 'fuel', 'ev charging', 'gas station', 'gas & ev', 'shell', 'chevron', 'costco gas'],
+  'travel': ['flights', 'hotels', 'airfare', 'travel (chase)', 'travel (cap1)', 'chase travel', 'airline', 'booking', 'united', 'alaska airlines', 'hotel', 'rental cars'],
+  'streaming': ['select streaming', 'netflix', 'hulu', 'disney+', 'spotify', 'youtube premium', 'tv/internet/streaming', 'hbo max', 'apple tv'],
+  'drugstore': ['drugstores', 'pharmacy', 'cvs', 'walgreens', 'rite aid'],
+  'amazon': ['amazon.com'],
+  'whole foods': ['wholefoods', 'whole foods market'],
+  'walmart': ['walmart', 'walmart.com'],
+  'paypal': ['paypal', 'venmo'],
+  'fitness': ['fitness clubs', 'gym', 'fitness', 'sports'],
+  'costco': ['costco', 'wholesale clubs', 'wholesale'],
+  'home improvement': ['home depot', 'lowes', "lowe's", 'hardware'],
+  'utilities': ['pge', 'pg&e', 'xfinity', 'comcast', 'san jose water', 'home utilities', 'electric', 'water bill', 'utility'],
+  'internet': ['xfinity', 'comcast', 'tv/internet/streaming'],
+  'online shopping': ['online', 'e-commerce'],
+  'rei': ['outdoor', 'sporting goods'],
+  'target': ['target'],
+};
+
+let cards = [];
+let editingCardId = null;
+let selectedColor = 'peach';
+
+function loadCards() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    cards = JSON.parse(saved);
+  } else {
+    cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+    saveCards();
+  }
+}
+
+function saveCards() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+}
+
+function getCurrentQuarter() {
+  const month = new Date().getMonth();
+  if (month < 3) return 'Q1';
+  if (month < 6) return 'Q2';
+  if (month < 9) return 'Q3';
+  return 'Q4';
+}
+
+// ─── Search / Match Logic ────────────────────────────────
+function normalizeQuery(q) { return q.toLowerCase().trim(); }
+
+// Word-aware matching: check if needle appears as exact word(s) in haystack
+function wordsOf(s) { return s.split(/[\s/(),&]+/).filter(Boolean); }
+function hasWordMatch(haystack, needle) {
+  if (haystack === needle) return true;
+  const hWords = wordsOf(haystack);
+  const nWords = wordsOf(needle);
+  // Single-word needle: must be an exact word in haystack
+  if (nWords.length === 1) return hWords.includes(needle);
+  // Multi-word needle: every needle word must exactly appear in haystack
+  return nWords.every(nw => hWords.includes(nw));
+}
+
+function findAliases(query) {
+  const q = normalizeQuery(query);
+  const matches = new Set([q]);
+  for (const [key, aliases] of Object.entries(CATEGORY_ALIASES)) {
+    let found = false;
+    // Check key ↔ query
+    if (hasWordMatch(key, q) || hasWordMatch(q, key)) found = true;
+    // Check aliases ↔ query (exact or word-boundary)
+    if (!found) {
+      for (const a of aliases) {
+        if (a === q || hasWordMatch(a, q) || hasWordMatch(q, a)) { found = true; break; }
+      }
+    }
+    if (found) {
+      matches.add(key);
+      aliases.forEach(a => matches.add(a));
+    }
+  }
+  return matches;
+}
+
+function matchesQuery(text, q, aliases) {
+  const t = normalizeQuery(text);
+  if (t === q || aliases.has(t)) return true;
+  // Word-aware: q is a full word in t, or t is a full word in q
+  if (hasWordMatch(t, q) || hasWordMatch(q, t)) return true;
+  return false;
+}
+
+function quickSearch(term) {
+  document.getElementById('searchInput').value = term;
+  handleSearch(term);
+}
+
+function getEffectiveRate(card, query) {
+  const q = normalizeQuery(query);
+  const aliases = findAliases(query);
+  const base = card.basePercent || 1;
+  let bestRate = base;
+  let source = 'Base';
+  let quarterlyRate = 0;
+  let permanentRate = 0;
+
+  for (const s of card.specials) {
+    if (matchesQuery(s.name, q, aliases) && s.percent > bestRate) {
+      bestRate = s.percent;
+      source = 'Special Offer';
+    }
+  }
+  if (source === 'Special Offer') return { rate: bestRate, source };
+
+  const currentQ = getCurrentQuarter();
+  for (const qr of card.quarterly) {
+    if (qr.quarter === currentQ) {
+      for (const cat of qr.categories) {
+        if (matchesQuery(cat, q, aliases) && qr.percent > quarterlyRate) {
+          quarterlyRate = qr.percent;
+        }
+      }
+    }
+  }
+
+  for (const r of card.rewards) {
+    if (matchesQuery(r.category, q, aliases) && r.percent > permanentRate) {
+      permanentRate = r.percent;
+    }
+  }
+
+  if (quarterlyRate > 0 && permanentRate > base) {
+    bestRate = quarterlyRate + permanentRate - base;
+    source = `Stacked Q${currentQ.slice(1)} 🔥`;
+  } else if (quarterlyRate > 0) {
+    bestRate = quarterlyRate;
+    source = `Quarterly (${currentQ})`;
+  } else if (permanentRate > 0) {
+    bestRate = permanentRate;
+    source = 'Permanent';
+  }
+
+  return { rate: bestRate, source };
+}
+
+function handleSearch(query) {
+  const q = query.trim();
+  const rec = document.getElementById('recommendation');
+  const runners = document.getElementById('recRunners');
+
+  if (!q || cards.length === 0) { rec.classList.add('hidden'); return; }
+
+  const results = [];
+  for (const card of cards) {
+    const { rate, source } = getEffectiveRate(card, q);
+    if (rate > 1) results.push({ card, rate, source });
+  }
+
+  results.sort((a, b) => {
+    if (b.rate !== a.rate) return b.rate - a.rate;
+    const aQ = a.source.includes('Quarterly') || a.source.includes('Stacked') ? 1 : 0;
+    const bQ = b.source.includes('Quarterly') || b.source.includes('Stacked') ? 1 : 0;
+    return bQ - aQ;
+  });
+
+  if (results.length > 0) {
+    const top = results[0];
+    document.getElementById('recCardName').textContent = top.card.name;
+    document.getElementById('recDetail').textContent = `${top.rate}% back on "${q}"`;
+    const badge = document.getElementById('recBadge');
+    badge.textContent = top.source;
+    badge.style.backgroundColor = top.card.brandColor || '#F5F0EB';
+    badge.className = 'inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold text-gray-600';
+    // Make top pick clickable
+    document.getElementById('recTop').onclick = () => openDetail(top.card.id);
+    document.getElementById('recTop').style.cursor = 'pointer';
+
+    const rest = results.slice(1, 5);
+    runners.innerHTML = rest.map(r => `
+      <div class="bg-white rounded-2xl shadow-md shadow-pink-100/30 px-4 py-3 flex items-center justify-between cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all"
+           onclick="openDetail('${r.card.id}')">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color:${r.card.brandColor || '#F5F0EB'}"></div>
+          <span class="text-sm font-bold text-gray-600 truncate">${r.card.name}</span>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-sm font-extrabold text-gray-700">${r.rate}%</span>
+          <span class="text-xs font-bold px-2 py-0.5 rounded-full text-gray-500" style="background-color:${r.card.brandColor}40">${r.source}</span>
+        </div>
+      </div>
+    `).join('');
+    rec.classList.remove('hidden');
+  } else {
+    let bestBase = null, bestBaseRate = 0;
+    for (const card of cards) {
+      const br = card.basePercent || 1;
+      if (br > bestBaseRate) { bestBaseRate = br; bestBase = card; }
+    }
+    if (bestBase) {
+      document.getElementById('recCardName').textContent = bestBase.name;
+      document.getElementById('recDetail').textContent = `Only base rate (${bestBaseRate}%) — no special match for "${q}"`;
+      const badge = document.getElementById('recBadge');
+      badge.textContent = 'Base Rate';
+      badge.className = 'inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold bg-softgray text-gray-400';
+      runners.innerHTML = '';
+      rec.classList.remove('hidden');
+    } else { rec.classList.add('hidden'); }
+  }
+}
+
+// ─── Render Cards ────────────────────────────────────────
+function renderCards() {
+  const list = document.getElementById('cardList');
+  const empty = document.getElementById('emptyState');
+  if (cards.length === 0) { list.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  const currentQ = getCurrentQuarter();
+
+  list.innerHTML = cards.map(card => {
+    const rewardTags = card.rewards.map(r =>
+      `<span class="inline-block bg-white/60 text-gray-500 text-xs font-bold px-2 py-1 rounded-xl mr-1 mb-1">${r.category} ${r.percent}%</span>`
+    ).join('');
+    const activeQuarterly = card.quarterly.filter(q => q.quarter === currentQ);
+    const quarterlyTags = activeQuarterly.map(q =>
+      q.categories.map(c =>
+        `<span class="inline-block bg-white/80 text-gray-600 text-xs font-bold px-2 py-1 rounded-xl mr-1 mb-1 border border-dashed border-gray-300">⚡ ${c} ${q.percent}%</span>`
+      ).join('')
+    ).join('');
+    const specialTags = card.specials.map(s =>
+      `<span class="inline-block bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-xl mr-1 mb-1">⭐ ${s.name} ${s.percent}%</span>`
+    ).join('');
+
+    return `
+      <div class="card-pouch rounded-3xl p-5 shadow-xl shadow-pink-100/50 cursor-pointer relative"
+           style="background-color:${card.brandColor || '#F5F0EB'}"
+           onclick="openDetail('${card.id}')">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-extrabold text-gray-700">${card.name}</h3>
+          <div class="flex gap-1">
+            <button onclick="event.stopPropagation(); editCard('${card.id}')"
+              class="bg-white/50 hover:bg-white/80 w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-colors" title="Edit">✏️</button>
+            <button onclick="event.stopPropagation(); deleteCard('${card.id}')"
+              class="bg-white/50 hover:bg-white/80 w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-colors" title="Delete">🗑️</button>
+          </div>
+        </div>
+        <div class="flex flex-wrap">${rewardTags}${quarterlyTags}${specialTags}</div>
+        <div class="mt-2 text-xs text-gray-500 font-semibold">Base: ${card.basePercent || 1}% on everything else</div>
+      </div>`;
+  }).join('');
+}
+
+// ─── Card Modal ──────────────────────────────────────────
+function openAddCardModal() {
+  editingCardId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Card';
+  document.getElementById('cardName').value = '';
+  selectedColor = 'peach';
+  updateColorPicker();
+  document.getElementById('rewardRows').innerHTML = '';
+  document.getElementById('specialRows').innerHTML = '';
+  document.getElementById('hasQuarterly').checked = false;
+  document.getElementById('quarterlySection').classList.add('hidden');
+  document.getElementById('quarterCategories').value = '';
+  document.getElementById('quarterPercent').value = 5;
+  addRewardRow();
+  document.getElementById('cardModal').classList.remove('hidden');
+}
+
+function editCard(id) {
+  const card = cards.find(c => c.id === id);
+  if (!card) return;
+  editingCardId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Card';
+  document.getElementById('cardName').value = card.name;
+  selectedColor = card.color;
+  updateColorPicker();
+  const rr = document.getElementById('rewardRows');
+  rr.innerHTML = '';
+  card.rewards.forEach(r => addRewardRow(r.category, r.percent));
+  if (card.rewards.length === 0) addRewardRow();
+  const sr = document.getElementById('specialRows');
+  sr.innerHTML = '';
+  card.specials.forEach(s => addSpecialRow(s.name, s.percent));
+  if (card.quarterly.length > 0) {
+    document.getElementById('hasQuarterly').checked = true;
+    document.getElementById('quarterlySection').classList.remove('hidden');
+    document.getElementById('quarterSelect').value = card.quarterly[0].quarter;
+    document.getElementById('quarterPercent').value = card.quarterly[0].percent;
+    document.getElementById('quarterCategories').value = card.quarterly.map(q => q.categories.join(', ')).join(', ');
+  } else {
+    document.getElementById('hasQuarterly').checked = false;
+    document.getElementById('quarterlySection').classList.add('hidden');
+  }
+  document.getElementById('cardModal').classList.remove('hidden');
+}
+
+function closeCardModal() { document.getElementById('cardModal').classList.add('hidden'); }
+
+function pickColor(color) { selectedColor = color; updateColorPicker(); }
+
+function updateColorPicker() {
+  document.querySelectorAll('#colorPicker button').forEach(btn => {
+    const c = btn.dataset.color;
+    btn.classList.toggle('border-gray-600', c === selectedColor);
+    btn.classList.toggle('scale-110', c === selectedColor);
+    btn.classList.toggle('border-transparent', c !== selectedColor);
+  });
+}
+
+function addRewardRow(cat = '', pct = '') {
+  const container = document.getElementById('rewardRows');
+  const row = document.createElement('div');
+  row.className = 'flex gap-2 items-center';
+  row.innerHTML = `
+    <input type="text" placeholder="Category" value="${cat}" class="flex-1 py-2 px-3 bg-softgray rounded-xl text-gray-600 font-semibold text-sm outline-none reward-cat" />
+    <input type="number" placeholder="%" value="${pct}" min="1" max="30" class="w-16 py-2 px-3 bg-softgray rounded-xl text-gray-600 font-semibold text-sm outline-none reward-pct" />
+    <button onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-300 font-bold text-lg">&times;</button>`;
+  container.appendChild(row);
+}
+
+function addSpecialRow(name = '', pct = '') {
+  const container = document.getElementById('specialRows');
+  const row = document.createElement('div');
+  row.className = 'flex gap-2 items-center';
+  row.innerHTML = `
+    <input type="text" placeholder="e.g. GameStop" value="${name}" class="flex-1 py-2 px-3 bg-softgray rounded-xl text-gray-600 font-semibold text-sm outline-none special-name" />
+    <input type="number" placeholder="%" value="${pct}" min="1" max="99" class="w-16 py-2 px-3 bg-softgray rounded-xl text-gray-600 font-semibold text-sm outline-none special-pct" />
+    <button onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-300 font-bold text-lg">&times;</button>`;
+  container.appendChild(row);
+}
+
+function toggleQuarterly() {
+  document.getElementById('quarterlySection').classList.toggle('hidden', !document.getElementById('hasQuarterly').checked);
+}
+
+function saveCard() {
+  const name = document.getElementById('cardName').value.trim();
+  if (!name) { document.getElementById('cardName').focus(); return; }
+  const rewards = [];
+  document.querySelectorAll('#rewardRows > div').forEach(row => {
+    const cat = row.querySelector('.reward-cat').value.trim();
+    const pct = parseFloat(row.querySelector('.reward-pct').value);
+    if (cat && pct > 0) rewards.push({ category: cat, percent: pct });
+  });
+  const specials = [];
+  document.querySelectorAll('#specialRows > div').forEach(row => {
+    const n = row.querySelector('.special-name').value.trim();
+    const p = parseFloat(row.querySelector('.special-pct').value);
+    if (n && p > 0) specials.push({ name: n, percent: p });
+  });
+  const quarterly = [];
+  if (document.getElementById('hasQuarterly').checked) {
+    const q = document.getElementById('quarterSelect').value;
+    const p = parseFloat(document.getElementById('quarterPercent').value) || 5;
+    const cats = document.getElementById('quarterCategories').value.split(',').map(c => c.trim()).filter(Boolean);
+    if (cats.length > 0) quarterly.push({ quarter: q, percent: p, categories: cats });
+  }
+  if (editingCardId) {
+    const card = cards.find(c => c.id === editingCardId);
+    if (card) { card.name = name; card.color = selectedColor; card.rewards = rewards; card.specials = specials; card.quarterly = quarterly.length > 0 ? quarterly : card.quarterly; }
+  } else {
+    cards.push({ id: 'card_' + Date.now(), name, color: selectedColor, brandColor: '#F5F0EB', rewards, quarterly, specials, basePercent: 1 });
+  }
+  saveCards(); renderCards(); closeCardModal();
+  const q = document.getElementById('searchInput').value;
+  if (q) handleSearch(q);
+}
+
+function deleteCard(id) {
+  if (!confirm('Remove this card from your wallet?')) return;
+  cards = cards.filter(c => c.id !== id);
+  saveCards(); renderCards();
+}
+
+// ─── Detail Modal ────────────────────────────────────────
+function openDetail(id) {
+  const card = cards.find(c => c.id === id);
+  if (!card) return;
+  document.getElementById('detailTitle').textContent = card.name;
+  const currentQ = getCurrentQuarter();
+  let html = `<div class="space-y-4">`;
+  html += `<div><p class="text-sm font-bold text-gray-500 mb-2">Permanent Rewards</p><div class="space-y-1">`;
+  if (card.rewards.length > 0) {
+    card.rewards.forEach(r => { html += `<div class="flex justify-between bg-softgray rounded-xl px-3 py-2"><span class="text-sm font-semibold text-gray-600">${r.category}</span><span class="text-sm font-extrabold text-gray-700">${r.percent}%</span></div>`; });
+  } else { html += `<p class="text-sm text-gray-300">None set</p>`; }
+  html += `</div></div>`;
+  if (card.quarterly.length > 0) {
+    html += `<div><p class="text-sm font-bold text-gray-500 mb-2">Quarterly Bonuses</p><div class="space-y-1">`;
+    card.quarterly.forEach(q => {
+      const isActive = q.quarter === currentQ;
+      html += `<div class="flex justify-between bg-softgray rounded-xl px-3 py-2 ${isActive ? 'ring-2 ring-peach' : 'opacity-60'}"><span class="text-sm font-semibold text-gray-600">${q.quarter}: ${q.categories.join(', ')}</span><span class="text-sm font-extrabold text-gray-700">${q.percent}%${isActive ? ' ⚡' : ''}</span></div>`;
+    });
+    html += `</div></div>`;
+  }
+  html += `<div><p class="text-sm font-bold text-gray-500 mb-2">Special Stash</p>`;
+  if (card.specials.length > 0) {
+    html += `<div class="space-y-1">`;
+    card.specials.forEach(s => { html += `<div class="flex justify-between bg-yellow-50 rounded-xl px-3 py-2"><span class="text-sm font-semibold text-yellow-700">⭐ ${s.name}</span><span class="text-sm font-extrabold text-yellow-800">${s.percent}%</span></div>`; });
+    html += `</div>`;
+  } else { html += `<p class="text-sm text-gray-300">No special offers — add some via Edit!</p>`; }
+  html += `</div>`;
+  html += `<div class="bg-softgray rounded-xl px-3 py-2 text-center"><span class="text-sm font-semibold text-gray-400">Everything else: <strong class="text-gray-600">${card.basePercent || 1}%</strong></span></div>`;
+  html += `</div>`;
+  document.getElementById('detailContent').innerHTML = html;
+  document.getElementById('detailModal').classList.remove('hidden');
+}
+
+function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
+
+document.getElementById('cardModal').addEventListener('click', (e) => { if (e.target === document.getElementById('cardModal')) closeCardModal(); });
+document.getElementById('detailModal').addEventListener('click', (e) => { if (e.target === document.getElementById('detailModal')) closeDetailModal(); });
+
+// ─── Init ────────────────────────────────────────────────
+loadCards();
+renderCards();
+</script>
+
+</body>
+</html>
