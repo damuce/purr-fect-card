@@ -1031,57 +1031,61 @@ function generateAppIcon() {
   try {
     const c = document.createElement('canvas');
     c.width = 180; c.height = 180;
-    const x = c.getContext('2d');
+    const ctx = c.getContext('2d');
 
     // Rounded-square cream background
-    x.fillStyle = '#FFF8F0';
-    x.beginPath();
-    x.roundRect(0, 0, 180, 180, 38);
-    x.fill();
+    ctx.fillStyle = '#FFF8F0';
+    ctx.beginPath(); ctx.roundRect(0, 0, 180, 180, 38); ctx.fill();
 
-    // Ears (triangles, tabby brown)
-    x.fillStyle = '#C4884D';
-    x.beginPath(); x.moveTo(42,88); x.lineTo(28,38); x.lineTo(72,68); x.closePath(); x.fill();
-    x.beginPath(); x.moveTo(138,88); x.lineTo(152,38); x.lineTo(108,68); x.closePath(); x.fill();
-    // Inner ears (peach)
-    x.fillStyle = '#FFDAB9';
-    x.beginPath(); x.moveTo(44,84); x.lineTo(34,46); x.lineTo(68,70); x.closePath(); x.fill();
-    x.beginPath(); x.moveTo(136,84); x.lineTo(146,46); x.lineTo(112,70); x.closePath(); x.fill();
+    // ── Ears: black outer ──
+    ctx.fillStyle = '#1C1C1C';
+    ctx.beginPath(); ctx.moveTo(38,92); ctx.lineTo(22,34); ctx.lineTo(70,66); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(142,92); ctx.lineTo(158,34); ctx.lineTo(110,66); ctx.closePath(); ctx.fill();
+    // Inner ears: pink
+    ctx.fillStyle = '#F0A0A8';
+    ctx.beginPath(); ctx.moveTo(41,87); ctx.lineTo(31,46); ctx.lineTo(66,69); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(139,87); ctx.lineTo(149,46); ctx.lineTo(114,69); ctx.closePath(); ctx.fill();
 
-    // Head
-    x.fillStyle = '#C4884D';
-    x.beginPath(); x.ellipse(90, 108, 58, 52, 0, 0, Math.PI * 2); x.fill();
+    // ── Head: black ──
+    ctx.fillStyle = '#1C1C1C';
+    ctx.beginPath(); ctx.ellipse(90, 108, 58, 54, 0, 0, Math.PI * 2); ctx.fill();
 
-    // Stripes
-    x.strokeStyle = '#8B5E34'; x.lineWidth = 3; x.lineCap = 'round';
-    [[62,72,60,88],[72,68,70,84],[108,68,110,84],[118,72,120,88]].forEach(([x1,y1,x2,y2]) => {
-      x.beginPath(); x.moveTo(x1,y1); x.quadraticCurveTo((x1+x2)/2+4, (y1+y2)/2, x2, y2); x.stroke();
-    });
+    // ── Fluffy white chest / chin patch (tuxedo) ──
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath(); ctx.ellipse(90, 128, 34, 30, 0, 0, Math.PI * 2); ctx.fill();
+    // White chin/lower muzzle extension
+    ctx.beginPath(); ctx.ellipse(90, 112, 22, 18, 0, 0, Math.PI * 2); ctx.fill();
 
-    // Muzzle
-    x.fillStyle = '#FFF8F0';
-    x.beginPath(); x.ellipse(90, 118, 26, 20, 0, 0, Math.PI * 2); x.fill();
+    // ── Eyes: bright green ──
+    // Outer iris
+    ctx.fillStyle = '#4DC87A';
+    ctx.beginPath(); ctx.ellipse(70, 100, 11, 12, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(110, 100, 11, 12, 0, 0, Math.PI * 2); ctx.fill();
+    // Inner iris detail (lighter ring)
+    ctx.fillStyle = '#7AE09A';
+    ctx.beginPath(); ctx.ellipse(70, 100, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(110, 100, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
+    // Pupils (vertical slit)
+    ctx.fillStyle = '#111111';
+    ctx.beginPath(); ctx.ellipse(70, 101, 3.5, 9, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(110, 101, 3.5, 9, 0, 0, Math.PI * 2); ctx.fill();
+    // Eye shine
+    ctx.fillStyle = 'white';
+    ctx.beginPath(); ctx.ellipse(73, 96, 3, 3, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(113, 96, 3, 3, 0, 0, Math.PI * 2); ctx.fill();
 
-    // Eyes
-    x.fillStyle = '#2D2926';
-    x.beginPath(); x.ellipse(72, 100, 9, 10, 0, 0, Math.PI * 2); x.fill();
-    x.beginPath(); x.ellipse(108, 100, 9, 10, 0, 0, Math.PI * 2); x.fill();
-    x.fillStyle = 'white';
-    x.beginPath(); x.ellipse(75, 97, 4, 4, 0, 0, Math.PI * 2); x.fill();
-    x.beginPath(); x.ellipse(111, 97, 4, 4, 0, 0, Math.PI * 2); x.fill();
+    // ── Nose: pink ──
+    ctx.fillStyle = '#F0A0A8';
+    ctx.beginPath(); ctx.ellipse(90, 115, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
 
-    // Nose
-    x.fillStyle = '#E8837C';
-    x.beginPath(); x.ellipse(90, 114, 5, 4, 0, 0, Math.PI * 2); x.fill();
+    // ── Mouth ──
+    ctx.strokeStyle = '#AAAAAA'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(85,119); ctx.quadraticCurveTo(90,125,95,119); ctx.stroke();
 
-    // Mouth
-    x.strokeStyle = '#C4884D'; x.lineWidth = 2;
-    x.beginPath(); x.moveTo(85,118); x.quadraticCurveTo(90,124,95,118); x.stroke();
-
-    // Whiskers
-    x.strokeStyle = 'rgba(139,115,85,0.45)'; x.lineWidth = 1.5;
-    [[22,108,62,112],[22,118,62,118],[158,108,118,112],[158,118,118,118]].forEach(([x1,y1,x2,y2]) => {
-      x.beginPath(); x.moveTo(x1,y1); x.lineTo(x2,y2); x.stroke();
+    // ── Whiskers (white on black) ──
+    ctx.strokeStyle = 'rgba(255,255,255,0.75)'; ctx.lineWidth = 1.5;
+    [[18,106,60,111],[18,116,60,116],[162,106,120,111],[162,116,120,116]].forEach(([x1,y1,x2,y2]) => {
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
     });
 
     document.getElementById('appleTouchIcon').href = c.toDataURL('image/png');
