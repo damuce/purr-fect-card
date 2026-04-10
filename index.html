@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Purr-fect Card</title>
+  <!-- PWA / Home Screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Purr-fect" />
+  <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -59,7 +64,7 @@
 <div id="app" class="max-w-md mx-auto px-4 pt-6">
 
   <!-- ═══ Header with Tabby Cat inline ═══ -->
-  <div class="flex flex-col items-center gap-2 mb-5">
+  <div class="flex items-center justify-center gap-3 mb-5">
     <!-- Tabby mascot (brown striped, red collar, bell) — 48x48 -->
     <svg class="flex-shrink-0" width="48" height="48" viewBox="0 0 100 100">
       <!-- Ears -->
@@ -96,7 +101,7 @@
       <circle cx="50" cy="78" r="4" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
       <circle cx="50" cy="79" r="1" fill="#DAA520"/>
     </svg>
-    <div class="text-center">
+    <div>
       <h1 class="text-2xl font-extrabold text-gray-700">Purr-fect Card</h1>
       <p class="text-sm text-gray-400 font-semibold">Your purr-fect rewards companion</p>
     </div>
@@ -1021,7 +1026,70 @@ function closeDetailModal() { document.getElementById('detailModal').classList.a
 document.getElementById('cardModal').addEventListener('click', (e) => { if (e.target === document.getElementById('cardModal')) closeCardModal(); });
 document.getElementById('detailModal').addEventListener('click', (e) => { if (e.target === document.getElementById('detailModal')) closeDetailModal(); });
 
+// ─── App Icon (Apple Touch Icon, generated via canvas) ───
+function generateAppIcon() {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 180; c.height = 180;
+    const x = c.getContext('2d');
+
+    // Rounded-square cream background
+    x.fillStyle = '#FFF8F0';
+    x.beginPath();
+    x.roundRect(0, 0, 180, 180, 38);
+    x.fill();
+
+    // Ears (triangles, tabby brown)
+    x.fillStyle = '#C4884D';
+    x.beginPath(); x.moveTo(42,88); x.lineTo(28,38); x.lineTo(72,68); x.closePath(); x.fill();
+    x.beginPath(); x.moveTo(138,88); x.lineTo(152,38); x.lineTo(108,68); x.closePath(); x.fill();
+    // Inner ears (peach)
+    x.fillStyle = '#FFDAB9';
+    x.beginPath(); x.moveTo(44,84); x.lineTo(34,46); x.lineTo(68,70); x.closePath(); x.fill();
+    x.beginPath(); x.moveTo(136,84); x.lineTo(146,46); x.lineTo(112,70); x.closePath(); x.fill();
+
+    // Head
+    x.fillStyle = '#C4884D';
+    x.beginPath(); x.ellipse(90, 108, 58, 52, 0, 0, Math.PI * 2); x.fill();
+
+    // Stripes
+    x.strokeStyle = '#8B5E34'; x.lineWidth = 3; x.lineCap = 'round';
+    [[62,72,60,88],[72,68,70,84],[108,68,110,84],[118,72,120,88]].forEach(([x1,y1,x2,y2]) => {
+      x.beginPath(); x.moveTo(x1,y1); x.quadraticCurveTo((x1+x2)/2+4, (y1+y2)/2, x2, y2); x.stroke();
+    });
+
+    // Muzzle
+    x.fillStyle = '#FFF8F0';
+    x.beginPath(); x.ellipse(90, 118, 26, 20, 0, 0, Math.PI * 2); x.fill();
+
+    // Eyes
+    x.fillStyle = '#2D2926';
+    x.beginPath(); x.ellipse(72, 100, 9, 10, 0, 0, Math.PI * 2); x.fill();
+    x.beginPath(); x.ellipse(108, 100, 9, 10, 0, 0, Math.PI * 2); x.fill();
+    x.fillStyle = 'white';
+    x.beginPath(); x.ellipse(75, 97, 4, 4, 0, 0, Math.PI * 2); x.fill();
+    x.beginPath(); x.ellipse(111, 97, 4, 4, 0, 0, Math.PI * 2); x.fill();
+
+    // Nose
+    x.fillStyle = '#E8837C';
+    x.beginPath(); x.ellipse(90, 114, 5, 4, 0, 0, Math.PI * 2); x.fill();
+
+    // Mouth
+    x.strokeStyle = '#C4884D'; x.lineWidth = 2;
+    x.beginPath(); x.moveTo(85,118); x.quadraticCurveTo(90,124,95,118); x.stroke();
+
+    // Whiskers
+    x.strokeStyle = 'rgba(139,115,85,0.45)'; x.lineWidth = 1.5;
+    [[22,108,62,112],[22,118,62,118],[158,108,118,112],[158,118,118,118]].forEach(([x1,y1,x2,y2]) => {
+      x.beginPath(); x.moveTo(x1,y1); x.lineTo(x2,y2); x.stroke();
+    });
+
+    document.getElementById('appleTouchIcon').href = c.toDataURL('image/png');
+  } catch(e) { /* silently skip if canvas unavailable */ }
+}
+
 // ─── Init ────────────────────────────────────────────────
+generateAppIcon();
 loadCards();
 buildDatalist();
 renderCards();
