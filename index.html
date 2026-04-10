@@ -6,7 +6,7 @@
   <title>Purr-fect Card</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwindcss.config = {
+    tailwind.config = {
       safelist: [
         'bg-peach', 'bg-mint', 'bg-lavender', 'bg-rosepink', 'bg-softgray',
         'bg-peach/40', 'bg-mint/40', 'bg-lavender/40', 'bg-rosepink/40',
@@ -59,7 +59,7 @@
 <div id="app" class="max-w-md mx-auto px-4 pt-6">
 
   <!-- ═══ Header with Tabby Cat inline ═══ -->
-  <div class="flex items-center gap-3 mb-5">
+  <div class="flex flex-col items-center gap-2 mb-5">
     <!-- Tabby mascot (brown striped, red collar, bell) — 48x48 -->
     <svg class="flex-shrink-0" width="48" height="48" viewBox="0 0 100 100">
       <!-- Ears -->
@@ -96,7 +96,7 @@
       <circle cx="50" cy="78" r="4" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
       <circle cx="50" cy="79" r="1" fill="#DAA520"/>
     </svg>
-    <div>
+    <div class="text-center">
       <h1 class="text-2xl font-extrabold text-gray-700">Purr-fect Card</h1>
       <p class="text-sm text-gray-400 font-semibold">Your purr-fect rewards companion</p>
     </div>
@@ -115,9 +115,10 @@
 
   <!-- ═══ Search Bar ═══ -->
   <div class="relative mb-6">
-    <input id="searchInput" type="text" placeholder="Where are we going, Meow?"
+    <input id="searchInput" type="text" list="searchDatalist" placeholder="Where are we going, Meow?"
       class="w-full py-4 pl-5 pr-14 bg-white rounded-3xl shadow-xl shadow-pink-100/50 text-gray-600 font-semibold text-base outline-none border-2 border-transparent focus:border-peach transition-all"
-      oninput="handleSearch(this.value)" />
+      oninput="handleSearch(this.value)" autocomplete="off" />
+    <datalist id="searchDatalist"></datalist>
     <button class="absolute right-3 top-1/2 -translate-y-1/2 text-white w-10 h-10 rounded-2xl flex items-center justify-center shadow-md transition-colors hover:scale-110"
       style="background-color:#FFDAB9"
       onclick="handleSearch(document.getElementById('searchInput').value)" aria-label="Search">
@@ -312,12 +313,22 @@
       <button onclick="closeDetailModal()" class="text-gray-300 hover:text-gray-500 text-2xl font-bold">&times;</button>
     </div>
     <div id="detailContent"></div>
+    <div class="flex gap-3 mt-5 pt-4 border-t border-gray-100">
+      <button id="detailEditBtn" onclick="detailEdit()"
+        class="flex-1 flex items-center justify-center gap-2 bg-softgray hover:bg-peach/60 text-gray-600 font-bold text-sm py-2.5 rounded-2xl transition-colors">
+        ✏️ Edit Card
+      </button>
+      <button id="detailDeleteBtn" onclick="detailDelete()"
+        class="flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-400 font-bold text-sm px-4 py-2.5 rounded-2xl transition-colors">
+        🗑️
+      </button>
+    </div>
   </div>
 </div>
 
 <script>
 // ─── Data Layer ──────────────────────────────────────────
-const STORAGE_KEY = 'purrfectCard_v1';
+const STORAGE_KEY = 'purrfectCard_v2';
 
 const DEFAULT_CARDS = [
   // ── Chase Trifecta ─────────────────────────────────────
@@ -334,7 +345,23 @@ const DEFAULT_CARDS = [
       { category: 'Travel', percent: 2 },
     ],
     quarterly: [],
-    specials: [],
+    specials: [
+      { name: 'Disney+', percent: 15, note: 'Chase Offer' },
+      { name: 'TurboTax', percent: 30, note: 'Chase Offer' },
+      { name: 'TaxAct', percent: 25, note: 'Chase Offer' },
+      { name: 'Dell', percent: 15, note: 'Chase Offer' },
+      { name: 'Blue Apron', percent: 15, note: 'Chase Offer' },
+      { name: 'ESPN', percent: 15, note: 'Chase Offer' },
+      { name: 'The Atlantic', percent: 15, note: 'Chase Offer' },
+      { name: 'Vitamix', percent: 15, note: 'Chase Offer' },
+      { name: 'ALDO', percent: 8, note: 'Chase Offer' },
+      { name: 'Caesars Rewards Hotels', percent: 10, note: 'Chase Offer' },
+      { name: 'Zenni Optical', percent: 10, note: 'Chase Offer' },
+      { name: 'LastPass', percent: 10, note: 'Chase Offer' },
+      { name: 'Honey Baked Ham', percent: 10, note: 'Expiring soon' },
+      { name: 'Starlink', percent: 30, note: 'Chase Offer' },
+      { name: 'FanDuel', percent: 50, note: 'Chase Offer' },
+    ],
     basePercent: 1,
   },
   {
@@ -389,6 +416,8 @@ const DEFAULT_CARDS = [
     quarterly: [],
     specials: [],
     basePercent: 1,
+    conditional: true,
+    conditionalNote: '⚠️ 5% applies ONLY to your single highest-spend eligible category each billing cycle, up to $500/mo. All other purchases earn 1%. Choose your biggest category this month and concentrate spending there.',
   },
   {
     id: 'cdc',
@@ -474,7 +503,15 @@ const DEFAULT_CARDS = [
       { category: 'Wholesale Clubs', percent: 2 },
     ],
     quarterly: [],
-    specials: [],
+    specials: [
+      { name: 'Sephora.com', percent: 4, note: 'BankAmeriDeal (Online)' },
+      { name: 'TaxAct', percent: 25, note: 'BankAmeriDeal (Online)' },
+      { name: 'Nike', percent: 2.5, note: 'BankAmeriDeal (Online)' },
+      { name: 'Panasonic', percent: 3, note: 'BankAmeriDeal (Online)' },
+      { name: 'Five Guys', percent: 12, note: 'BankAmeriDeal (Nearby)' },
+      { name: 'Lucky Grocery', percent: 13, note: 'BankAmeriDeal (Nearby)' },
+      { name: 'Little Caesars', percent: 16, note: 'BankAmeriDeal (Nearby)' },
+    ],
     basePercent: 1,
   },
   {
@@ -575,6 +612,7 @@ const CATEGORY_ALIASES = {
 
 let cards = [];
 let editingCardId = null;
+let currentDetailCardId = null;
 let selectedColor = 'peach';
 
 function loadCards() {
@@ -589,6 +627,18 @@ function loadCards() {
 
 function saveCards() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+  buildDatalist();
+}
+
+function buildDatalist() {
+  const names = new Set();
+  for (const card of cards) {
+    card.rewards.forEach(r => names.add(r.category));
+    card.quarterly.forEach(q => q.categories.forEach(c => names.add(c)));
+    card.specials.forEach(s => names.add(s.name));
+  }
+  const dl = document.getElementById('searchDatalist');
+  if (dl) dl.innerHTML = [...names].sort().map(n => `<option value="${n}">`).join('');
 }
 
 function getCurrentQuarter() {
@@ -640,6 +690,8 @@ function matchesQuery(text, q, aliases) {
   if (t === q || aliases.has(t)) return true;
   // Word-aware: q is a full word in t, or t is a full word in q
   if (hasWordMatch(t, q) || hasWordMatch(q, t)) return true;
+  // Prefix match: allow partial typing (e.g. "seph" → "sephora")
+  if (q.length >= 2 && wordsOf(t).some(w => w.startsWith(q))) return true;
   return false;
 }
 
@@ -654,16 +706,20 @@ function getEffectiveRate(card, query) {
   const base = card.basePercent || 1;
   let bestRate = base;
   let source = 'Base';
+  let matchedName = null;
   let quarterlyRate = 0;
   let permanentRate = 0;
+  let quarterlyName = null;
+  let permanentName = null;
 
   for (const s of card.specials) {
     if (matchesQuery(s.name, q, aliases) && s.percent > bestRate) {
       bestRate = s.percent;
       source = 'Special Offer';
+      matchedName = s.name;
     }
   }
-  if (source === 'Special Offer') return { rate: bestRate, source };
+  if (source === 'Special Offer') return { rate: bestRate, source, matchedName };
 
   const currentQ = getCurrentQuarter();
   for (const qr of card.quarterly) {
@@ -671,6 +727,7 @@ function getEffectiveRate(card, query) {
       for (const cat of qr.categories) {
         if (matchesQuery(cat, q, aliases) && qr.percent > quarterlyRate) {
           quarterlyRate = qr.percent;
+          quarterlyName = cat;
         }
       }
     }
@@ -679,21 +736,25 @@ function getEffectiveRate(card, query) {
   for (const r of card.rewards) {
     if (matchesQuery(r.category, q, aliases) && r.percent > permanentRate) {
       permanentRate = r.percent;
+      permanentName = r.category;
     }
   }
 
   if (quarterlyRate > 0 && permanentRate > base) {
     bestRate = quarterlyRate + permanentRate - base;
     source = `Stacked Q${currentQ.slice(1)} 🔥`;
+    matchedName = quarterlyName;
   } else if (quarterlyRate > 0) {
     bestRate = quarterlyRate;
     source = `Quarterly (${currentQ})`;
+    matchedName = quarterlyName;
   } else if (permanentRate > 0) {
     bestRate = permanentRate;
-    source = 'Permanent';
+    source = card.conditional ? 'Conditional ⚠️' : 'Permanent';
+    matchedName = permanentName;
   }
 
-  return { rate: bestRate, source };
+  return { rate: bestRate, source, matchedName };
 }
 
 function handleSearch(query) {
@@ -705,12 +766,18 @@ function handleSearch(query) {
 
   const results = [];
   for (const card of cards) {
-    const { rate, source } = getEffectiveRate(card, q);
-    if (rate > 1) results.push({ card, rate, source });
+    const { rate, source, matchedName } = getEffectiveRate(card, q);
+    if (rate > 1) results.push({ card, rate, source, matchedName });
   }
 
   results.sort((a, b) => {
+    // Conditional cards always go to the very bottom
+    const aCond = a.card.conditional ? 1 : 0;
+    const bCond = b.card.conditional ? 1 : 0;
+    if (aCond !== bCond) return aCond - bCond;
+    // Among non-conditional: sort by rate descending
     if (b.rate !== a.rate) return b.rate - a.rate;
+    // Quarterly/Stacked cards rank above Permanent within same rate
     const aQ = a.source.includes('Quarterly') || a.source.includes('Stacked') ? 1 : 0;
     const bQ = b.source.includes('Quarterly') || b.source.includes('Stacked') ? 1 : 0;
     return bQ - aQ;
@@ -719,7 +786,8 @@ function handleSearch(query) {
   if (results.length > 0) {
     const top = results[0];
     document.getElementById('recCardName').textContent = top.card.name;
-    document.getElementById('recDetail').textContent = `${top.rate}% back on "${q}"`;
+    const displayName = top.matchedName || q;
+    document.getElementById('recDetail').textContent = `${top.rate}% back on "${displayName}"`;
     const badge = document.getElementById('recBadge');
     badge.textContent = top.source;
     badge.style.backgroundColor = top.card.brandColor || '#F5F0EB';
@@ -744,20 +812,7 @@ function handleSearch(query) {
     `).join('');
     rec.classList.remove('hidden');
   } else {
-    let bestBase = null, bestBaseRate = 0;
-    for (const card of cards) {
-      const br = card.basePercent || 1;
-      if (br > bestBaseRate) { bestBaseRate = br; bestBase = card; }
-    }
-    if (bestBase) {
-      document.getElementById('recCardName').textContent = bestBase.name;
-      document.getElementById('recDetail').textContent = `Only base rate (${bestBaseRate}%) — no special match for "${q}"`;
-      const badge = document.getElementById('recBadge');
-      badge.textContent = 'Base Rate';
-      badge.className = 'inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold bg-softgray text-gray-400';
-      runners.innerHTML = '';
-      rec.classList.remove('hidden');
-    } else { rec.classList.add('hidden'); }
+    rec.classList.add('hidden');
   }
 }
 
@@ -779,9 +834,10 @@ function renderCards() {
         `<span class="inline-block bg-white/80 text-gray-600 text-xs font-bold px-2 py-1 rounded-xl mr-1 mb-1 border border-dashed border-gray-300">⚡ ${c} ${q.percent}%</span>`
       ).join('')
     ).join('');
-    const specialTags = card.specials.map(s =>
-      `<span class="inline-block bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-xl mr-1 mb-1">⭐ ${s.name} ${s.percent}%</span>`
-    ).join('');
+    const specialCount = card.specials.length;
+    const specialBadge = specialCount > 0
+      ? `<span class="inline-block bg-yellow-100 text-yellow-600 text-xs font-bold px-2 py-1 rounded-xl mr-1 mb-1">⭐ ${specialCount} offer${specialCount > 1 ? 's' : ''}</span>`
+      : '';
 
     return `
       <div class="card-pouch rounded-3xl p-5 shadow-xl shadow-pink-100/50 cursor-pointer relative"
@@ -789,14 +845,8 @@ function renderCards() {
            onclick="openDetail('${card.id}')">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-base font-extrabold text-gray-700">${card.name}</h3>
-          <div class="flex gap-1">
-            <button onclick="event.stopPropagation(); editCard('${card.id}')"
-              class="bg-white/50 hover:bg-white/80 w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-colors" title="Edit">✏️</button>
-            <button onclick="event.stopPropagation(); deleteCard('${card.id}')"
-              class="bg-white/50 hover:bg-white/80 w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-colors" title="Delete">🗑️</button>
-          </div>
         </div>
-        <div class="flex flex-wrap">${rewardTags}${quarterlyTags}${specialTags}</div>
+        <div class="flex flex-wrap">${rewardTags}${quarterlyTags}${specialBadge}</div>
         <div class="mt-2 text-xs text-gray-500 font-semibold">Base: ${card.basePercent || 1}% on everything else</div>
       </div>`;
   }).join('');
@@ -926,12 +976,20 @@ function deleteCard(id) {
 }
 
 // ─── Detail Modal ────────────────────────────────────────
+function detailEdit() { closeDetailModal(); editCard(currentDetailCardId); }
+function detailDelete() { closeDetailModal(); deleteCard(currentDetailCardId); }
+
 function openDetail(id) {
+  currentDetailCardId = id;
   const card = cards.find(c => c.id === id);
   if (!card) return;
   document.getElementById('detailTitle').textContent = card.name;
   const currentQ = getCurrentQuarter();
   let html = `<div class="space-y-4">`;
+  // Show conditional warning banner if applicable
+  if (card.conditional && card.conditionalNote) {
+    html += `<div class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-xs font-semibold text-amber-700 leading-relaxed">${card.conditionalNote}</div>`;
+  }
   html += `<div><p class="text-sm font-bold text-gray-500 mb-2">Permanent Rewards</p><div class="space-y-1">`;
   if (card.rewards.length > 0) {
     card.rewards.forEach(r => { html += `<div class="flex justify-between bg-softgray rounded-xl px-3 py-2"><span class="text-sm font-semibold text-gray-600">${r.category}</span><span class="text-sm font-extrabold text-gray-700">${r.percent}%</span></div>`; });
@@ -965,6 +1023,7 @@ document.getElementById('detailModal').addEventListener('click', (e) => { if (e.
 
 // ─── Init ────────────────────────────────────────────────
 loadCards();
+buildDatalist();
 renderCards();
 </script>
 
